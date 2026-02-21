@@ -1,0 +1,47 @@
+from pydantic import BaseModel, Field
+from typing import Dict, Any, List, Optional
+
+class LoginIn(BaseModel):
+    email: str
+    password: str
+
+class TokenOut(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+class UploadOut(BaseModel):
+    id: int
+    filename: str
+
+class MappingIn(BaseModel):
+    # maps canonical field -> source column name
+    mapping: Dict[str, str]
+
+class MappingOut(BaseModel):
+    id: int
+    upload_id: int
+    mapping: Dict[str, str]
+
+class Finding(BaseModel):
+    rule_id: str
+    severity: str  # HIGH|MEDIUM|LOW
+    title: str
+    description: str
+    evidence: Dict[str, Any] = Field(default_factory=dict)
+    suggestion: str = ""
+    amount_impact: Optional[float] = None
+    employee_refs: List[str] = Field(default_factory=list)
+
+class RunOut(BaseModel):
+    id: int
+    upload_id: int
+    mapping_id: int
+    ruleset_version: str
+    findings: List[Finding]
+
+    counts: Dict[str, int]
+    invalid_rows: List[Dict[str, Any]] = Field(default_factory=list)
+
+    # Phase 3 — Production Layer (append-only exposure of scoring output)
+    risk_points: Optional[int] = None
+    compliance_score: Optional[float] = None

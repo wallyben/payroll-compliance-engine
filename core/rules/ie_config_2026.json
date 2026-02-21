@@ -1,0 +1,43 @@
+﻿{
+  "ruleset_version": "IE-2026.01",
+
+  "usc": {
+    "exemption_limit": 13000,
+    "bands": [
+      { "cap": 12012, "rate": 0.005 },
+      { "cap": 28700, "rate": 0.02 },
+      { "cap": 70044, "rate": 0.03 },
+      { "cap": null, "rate": 0.08 }
+    ]
+  },
+
+  "income_tax": {
+    "standard_rate_band_single": 44000,
+    "standard_rate": 0.2,
+    "higher_rate": 0.4
+  },
+
+  "prsi": {
+    "class_a": {
+      "employee_rate_from_2026_10_01": 0.0435,
+      "employee_rate_pre_2026_10_01": 0.042,
+      "employer_rate_lower": 0.0915,
+      "employer_rate_higher": 0.114,
+      "weekly_threshold_for_higher": 552
+    }
+  },
+
+  "minimum_wage": {
+    "hourly_rate": 12.70
+  },
+
+  "auto_enrolment": {
+    "scheme_name": "MyFutureFund",
+    "start_date": "2026-01-01",
+    "eligibility": {
+      "age_min": 23,
+      "age_max": 60,
+      "annual_earnings_min": 20000
+    }
+  }
+}
