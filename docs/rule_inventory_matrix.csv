@@ -1,5 +1,5 @@
 "rule_id","category","description","required_fields","tax_year_dependent","config_table","implemented","test_fixture"
-"IE.SANITY.001","SANITY","Gross pay and deduction consistency (gross minus deductions vs net)","gross_pay|net_pay|deductions_total","no","","no",""
+"IE.SANITY.001","SANITY","Gross pay and deduction consistency (gross minus deductions vs net)","gross_pay|net_pay|deductions_total","no","","yes",""
 "IE.SANITY.002","SANITY","Negative or zero gross pay","gross_pay","no","","yes",""
 "IE.SANITY.003","SANITY","Impossible or negative deduction values","gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted","no","","yes",""
 "IE.SANITY.004","SANITY","Deduction breakdown sum mismatch (breakdown total != declared or gross minus net)","gross_pay|net_pay|deduction_breakdown|deductions_total","no","","no",""

@@ -16,6 +16,28 @@ def _finding(rule_id: str, severity: str, title: str, description: str, **kw) ->
     return out
 
 
+def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    tol = 0.02
+    bad = []
+    for r in rows:
+        known = (r.paye or 0.0) + (r.usc or 0.0) + (r.prsi_ee or 0.0) + (r.pension_ee or 0.0)
+        expected_net = r.gross_pay - known
+        if abs(r.net_pay - expected_net) > tol:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.001",
+            "HIGH",
+            "Gross pay and deduction consistency (gross minus deductions vs net)",
+            "One or more rows have net pay inconsistent with gross minus known deductions.",
+            evidence={"count": len(bad)},
+            suggestion="Verify gross, net, and deduction columns; net should equal gross minus PAYE/USC/PRSI/pension.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_gross_net_integrity(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     bad = []
