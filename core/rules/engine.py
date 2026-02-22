@@ -6,6 +6,7 @@ from core.rules.rules import (
     rule_sanity_001_gross_deduction_consistency,
     rule_sanity_004_deduction_breakdown_mismatch,
     rule_sanity_006_net_inconsistency,
+    rule_sanity_007_net_upper_bound,
     rule_gross_net_integrity,
     rule_sanity_002_negative_or_zero_gross,
     rule_sanity_003_impossible_or_negative_deductions,
@@ -37,6 +38,7 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings += rule_sanity_001_gross_deduction_consistency(rows)
     findings += rule_sanity_004_deduction_breakdown_mismatch(rows)
     findings += rule_sanity_006_net_inconsistency(rows)
+    findings += rule_sanity_007_net_upper_bound(rows)
     findings += rule_gross_net_integrity(rows)
     findings += rule_sanity_002_negative_or_zero_gross(rows)
     findings += rule_sanity_003_impossible_or_negative_deductions(rows)

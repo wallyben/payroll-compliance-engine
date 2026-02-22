@@ -43,6 +43,28 @@ def rule_sanity_006_net_inconsistency(rows: List[CanonicalPayrollRow]) -> List[d
     return findings
 
 
+def rule_sanity_007_net_upper_bound(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    tol = 0.02
+    bad = []
+    for r in rows:
+        known = (r.paye or 0.0) + (r.usc or 0.0) + (r.prsi_ee or 0.0) + (r.pension_ee or 0.0)
+        max_net = r.gross_pay - known + tol
+        if r.net_pay > max_net:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.007",
+            "HIGH",
+            "Net pay upper bound (net exceeds gross minus minimum deductions)",
+            "One or more rows have net pay higher than gross minus known deductions.",
+            evidence={"count": len(bad)},
+            suggestion="Verify net and deduction columns.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     tol = 0.02
