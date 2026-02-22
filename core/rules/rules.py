@@ -118,6 +118,22 @@ def rule_usc_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
     return findings
 
 
+def rule_prsi_003_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.prsi_ee < -0.01 or r.prsi_er < -0.01]
+    if bad:
+        findings.append(_finding(
+            "IE.PRSI.003",
+            "HIGH",
+            "PRSI negative detection",
+            "One or more rows have negative PRSI (employee or employer).",
+            evidence={"count": len(bad)},
+            suggestion="Verify PRSI columns; negative values may indicate refunds or mapping errors.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     neg = [r.employee_id for r in rows if r.net_pay < -0.01]
