@@ -14,7 +14,7 @@
 "IE.USC.003","USC","USC exemption limit breach (taxable pay below threshold but USC deducted)","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
 "IE.USC.004","USC","USC negative detection","usc_deducted|total_taxable_pay","no","","yes",""
 "IE.USC.005","USC","USC applied when taxable pay zero","total_taxable_pay|usc_deducted","no","","no",""
-"IE.USC.006","USC","USC missing above threshold","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.USC.006","USC","USC missing above threshold","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","yes",""
 "IE.PRSI.001","PRSI","PRSI class mismatch detection","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
 "IE.PRSI.002","PRSI","PRSI threshold or rate breach by class","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
 "IE.PRSI.003","PRSI","PRSI negative detection","prsi_deducted|gross_pay","no","","yes",""

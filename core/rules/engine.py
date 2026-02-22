@@ -12,6 +12,7 @@ from core.rules.rules import (
     rule_paye_005_applied_when_taxable_zero,
     rule_paye_004_negative,
     rule_usc_004_negative,
+    rule_usc_006_missing_above_threshold,
     rule_prsi_003_negative,
     rule_negative_or_zero_pay,
     rule_usc_deterministic_bounds,
@@ -41,6 +42,7 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings += rule_negative_or_zero_pay(rows)
 
     # Phase 2 deterministic bounds (HIGH)
+    findings += rule_usc_006_missing_above_threshold(rows, config)
     findings += rule_usc_deterministic_bounds(rows, config)
     findings += rule_prsi_deterministic_bounds(rows, config)
     findings += rule_net_deterministic_upper_bound(rows, config)

@@ -218,6 +218,30 @@ def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     return findings
 
 
+def rule_usc_006_missing_above_threshold(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
+    findings = []
+    usc_cfg = cfg.get("usc", {})
+    exemption = usc_cfg.get("exemption_limit", 13000)
+    bad = []
+    for r in rows:
+        if r.usc > 0.01:
+            continue
+        annual = r.gross_pay * (52 if r.gross_pay < 2000 else 12)
+        if annual > exemption:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.USC.006",
+            "HIGH",
+            "USC missing above threshold",
+            "One or more rows have taxable pay above USC exemption but zero USC.",
+            evidence={"count": len(bad), "exemption_limit": exemption},
+            suggestion="Verify USC calculation; USC expected when pay exceeds exemption.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 # ✅ FIXED Progressive USC Calculation
 def _usc_calc_annual(income: float, usc_cfg: Dict[str, Any]) -> float:
     bands = usc_cfg["bands"]
