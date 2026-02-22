@@ -86,6 +86,25 @@ def rule_sanity_005_negative_net(rows: List[CanonicalPayrollRow]) -> List[dict]:
     return findings
 
 
+def rule_paye_001_negative_or_impossible(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [
+        r.employee_id for r in rows
+        if r.paye < -0.01 or r.paye > r.gross_pay + 0.01
+    ]
+    if bad:
+        findings.append(_finding(
+            "IE.PAYE.001",
+            "HIGH",
+            "Negative or impossible PAYE amount",
+            "One or more rows have PAYE negative or exceeding gross pay.",
+            evidence={"count": len(bad)},
+            suggestion="Verify PAYE and gross pay; PAYE cannot be negative or exceed gross.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_paye_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     bad = [r.employee_id for r in rows if r.paye < -0.01]

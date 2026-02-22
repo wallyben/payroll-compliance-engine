@@ -7,6 +7,7 @@ from core.rules.rules import (
     rule_sanity_002_negative_or_zero_gross,
     rule_sanity_003_impossible_or_negative_deductions,
     rule_sanity_005_negative_net,
+    rule_paye_001_negative_or_impossible,
     rule_paye_004_negative,
     rule_usc_004_negative,
     rule_prsi_003_negative,
@@ -29,6 +30,7 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings += rule_sanity_002_negative_or_zero_gross(rows)
     findings += rule_sanity_003_impossible_or_negative_deductions(rows)
     findings += rule_sanity_005_negative_net(rows)
+    findings += rule_paye_001_negative_or_impossible(rows)
     findings += rule_paye_004_negative(rows)
     findings += rule_usc_004_negative(rows)
     findings += rule_prsi_003_negative(rows)
