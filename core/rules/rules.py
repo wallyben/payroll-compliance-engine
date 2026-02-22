@@ -22,6 +22,27 @@ def rule_sanity_004_deduction_breakdown_mismatch(rows: List[CanonicalPayrollRow]
     return []
 
 
+def rule_sanity_006_net_inconsistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    tol = 0.02
+    bad = []
+    for r in rows:
+        known = (r.paye or 0.0) + (r.usc or 0.0) + (r.prsi_ee or 0.0) + (r.pension_ee or 0.0)
+        if abs(r.net_pay - (r.gross_pay - known)) > tol:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.006",
+            "HIGH",
+            "Net pay inconsistency (gross minus deductions != net)",
+            "One or more rows have net pay not equal to gross minus known deductions.",
+            evidence={"count": len(bad)},
+            suggestion="Verify gross, net, and deduction columns.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     tol = 0.02

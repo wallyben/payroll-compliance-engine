@@ -4,7 +4,7 @@
 "IE.SANITY.003","SANITY","Impossible or negative deduction values","gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted","no","","yes",""
 "IE.SANITY.004","SANITY","Deduction breakdown sum mismatch (breakdown total != declared or gross minus net)","gross_pay|net_pay|deduction_breakdown|deductions_total","no","","yes",""
 "IE.SANITY.005","SANITY","Negative net pay detection","net_pay","no","","yes",""
-"IE.SANITY.006","SANITY","Net pay inconsistency (gross minus deductions != net)","gross_pay|deductions_total|net_pay","no","","no",""
+"IE.SANITY.006","SANITY","Net pay inconsistency (gross minus deductions != net)","gross_pay|deductions_total|net_pay","no","","yes",""
 "IE.SANITY.007","SANITY","Net pay upper bound (net exceeds gross minus minimum deductions)","gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted","no","","no",""
 "IE.SANITY.008","SANITY","Net equals gross while deductions present","gross_pay|net_pay|deductions_total","no","","no",""
 "IE.SANITY.009","SANITY","Deductions exceed gross","gross_pay|deductions_total|net_pay","no","","no",""
