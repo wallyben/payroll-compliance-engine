@@ -51,6 +51,25 @@ def rule_sanity_002_negative_or_zero_gross(rows: List[CanonicalPayrollRow]) -> L
     return findings
 
 
+def rule_sanity_003_impossible_or_negative_deductions(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [
+        r.employee_id for r in rows
+        if r.paye < -0.01 or r.usc < -0.01 or r.prsi_ee < -0.01 or r.prsi_er < -0.01 or r.pension_ee < -0.01
+    ]
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.003",
+            "HIGH",
+            "Impossible or negative deduction values",
+            "One or more rows have negative PAYE, USC, PRSI, or pension deduction values.",
+            evidence={"count": len(bad)},
+            suggestion="Verify deduction columns; negative values may indicate refunds or mapping errors.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     neg = [r.employee_id for r in rows if r.net_pay < -0.01]
