@@ -353,6 +353,30 @@ def rule_prsi_004_applied_below_threshold(rows: List[CanonicalPayrollRow], cfg: 
     return findings
 
 
+def rule_prsi_005_missing_above_threshold(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
+    findings = []
+    prsi_cfg = cfg.get("prsi", {}).get("class_a", {})
+    weekly_lower = prsi_cfg.get("weekly_threshold_lower", 352.0)
+    bad = []
+    for r in rows:
+        if r.prsi_ee > 0.01:
+            continue
+        weekly = r.gross_pay if r.gross_pay < 2000 else r.gross_pay / 4.33
+        if weekly >= weekly_lower:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.PRSI.005",
+            "HIGH",
+            "PRSI missing above threshold",
+            "One or more rows have pay above the lower earnings threshold but zero employee PRSI.",
+            evidence={"count": len(bad), "weekly_threshold_lower": weekly_lower},
+            suggestion="Verify PRSI calculation; employee PRSI expected when pay is above threshold.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_prsi_deterministic_bounds(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
     prsi_cfg = cfg["prsi"]["class_a"]
 

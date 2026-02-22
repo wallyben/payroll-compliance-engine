@@ -19,7 +19,7 @@
 "IE.PRSI.002","PRSI","PRSI threshold or rate breach by class","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","yes",""
 "IE.PRSI.003","PRSI","PRSI negative detection","prsi_deducted|gross_pay","no","","yes",""
 "IE.PRSI.004","PRSI","PRSI applied below threshold","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","yes",""
-"IE.PRSI.005","PRSI","PRSI missing above threshold","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PRSI.005","PRSI","PRSI missing above threshold","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","yes",""
 "IE.PAYE.001","PAYE","Negative or impossible PAYE amount","paye_tax|gross_pay|net_pay","no","","yes",""
 "IE.PAYE.002","PAYE","PAYE vs net sanity (total deductions vs gross minus net)","paye_tax|gross_pay|net_pay|usc_deducted|prsi_deducted|pension_ee","no","","no",""
 "IE.PAYE.003","PAYE","PAYE zero when taxable pay present","total_taxable_pay|paye_tax|tax_year","yes","ie_rates_{tax_year}.json","yes",""
