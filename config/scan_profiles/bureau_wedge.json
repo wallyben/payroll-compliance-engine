@@ -1,0 +1,16 @@
+﻿{
+  "profile_name": "BUREAU_WEDGE",
+  "active_rules": [
+    "IE.SANITY.001",
+    "IE.PAYE.001",
+    "IE.PAYE.003",
+    "IE.PAYE.005",
+    "IE.USC.001",
+    "IE.USC.003",
+    "IE.USC.006",
+    "IE.PRSI.001",
+    "IE.PRSI.002",
+    "IE.AUTO_ENROL.001",
+    "IE.AUTO_ENROL.002"
+  ]
+}
