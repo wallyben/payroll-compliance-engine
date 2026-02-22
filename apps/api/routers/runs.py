@@ -9,6 +9,7 @@ from apps.api.schemas import RunOut, Finding
 from apps.api.deps import require_role
 from apps.api.settings import settings
 from apps.api.helpers import aggregate_severity_summary
+from apps.api.config_loader import load_rules_config
 
 from core.ingest.loader import load_table
 from core.normalize.mapper import normalize
@@ -17,11 +18,6 @@ from core.scoring.risk import score_bundle
 from core.reporting.pdf import build_pdf
 
 router = APIRouter()
-CFG_PATH = Path("core/rules/ie_config_2026.json")
-
-
-def _load_cfg():
-    return json.loads(CFG_PATH.read_text(encoding="utf-8"))
 
 
 @router.post("", response_model=RunOut)
@@ -38,7 +34,7 @@ def create_run(
     if not upload or not mapping or mapping.upload_id != upload_id:
         raise HTTPException(status_code=404, detail="Upload/mapping not found or mismatched")
 
-    cfg = _load_cfg()
+    cfg = load_rules_config()
 
     # Load file
     df = load_table(upload.stored_path)
