@@ -1,0 +1,11 @@
+﻿rule_id,category,description,required_fields,tax_year_dependent,config_table,implemented,test_fixture
+IE.MINWAGE.001,MIN_WAGE,Hourly rate below statutory minimum,hours_worked|gross_pay|tax_year,yes,ie_rates_{tax_year}.json,no,
+IE.USC.001,USC,USC band miscalculation,total_taxable_pay|usc_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
+IE.USC.002,USC,USC band ordering incorrect,total_taxable_pay|usc_breakdown|tax_year,yes,ie_rates_{tax_year}.json,no,
+IE.PRSI.001,PRSI,PRSI class mismatch detection,prsi_class|gross_pay|prsi_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
+IE.PAYE.001,PAYE,Negative or impossible PAYE amount,paye_tax|gross_pay|net_pay,no,,no,
+IE.NET.001,NET,Net pay inconsistency (gross - deductions != net),gross_pay|deductions_total|net_pay,no,,no,
+IE.PAYSLIP.001,PAYSLIP,Missing itemised deductions,gross_pay|deduction_breakdown,no,,no,
+IE.WORKTIME.001,WORKING_TIME,48-hour weekly average exceeded,hours_worked|reference_period,no,,no,
+IE.SSP.001,SSP,Statutory sick pay entitlement breach,sick_days_paid|tax_year,yes,ie_ssp_{tax_year}.json,no,
+IE.AUTOENROL.001,AUTO_ENROL,Auto enrolment contribution mismatch,pension_ee|gross_pay|tax_year,yes,ie_pension_{tax_year}.json,no,
