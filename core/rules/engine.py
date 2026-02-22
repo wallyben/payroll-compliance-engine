@@ -1,9 +1,10 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from typing import List, Dict, Any
 from core.normalize.schema import CanonicalPayrollRow
 
 from core.rules.rules import (
     rule_gross_net_integrity,
+    rule_sanity_002_negative_or_zero_gross,
     rule_negative_or_zero_pay,
     rule_usc_deterministic_bounds,
     rule_prsi_deterministic_bounds,
@@ -20,6 +21,7 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings: List[dict] = []
 
     findings += rule_gross_net_integrity(rows)
+    findings += rule_sanity_002_negative_or_zero_gross(rows)
     findings += rule_negative_or_zero_pay(rows)
 
     # Phase 2 deterministic bounds (HIGH)

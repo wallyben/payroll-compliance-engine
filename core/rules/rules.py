@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 from typing import List, Dict, Any
 from core.normalize.schema import CanonicalPayrollRow
 
@@ -31,6 +31,22 @@ def rule_gross_net_integrity(rows: List[CanonicalPayrollRow]) -> List[dict]:
             evidence={"count": len(bad)},
             suggestion="Check adjustments, reversals, and deduction sign conventions in your payroll export.",
             employee_refs=bad[:200]
+        ))
+    return findings
+
+
+def rule_sanity_002_negative_or_zero_gross(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.gross_pay <= 0.0]
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.002",
+            "HIGH",
+            "Negative or zero gross pay",
+            "One or more rows have gross pay <= 0.",
+            evidence={"count": len(bad)},
+            suggestion="Verify gross pay values; negative or zero gross may indicate data or mapping errors.",
+            employee_refs=bad[:200],
         ))
     return findings
 
