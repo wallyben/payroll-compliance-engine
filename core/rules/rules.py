@@ -86,6 +86,22 @@ def rule_sanity_005_negative_net(rows: List[CanonicalPayrollRow]) -> List[dict]:
     return findings
 
 
+def rule_paye_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.paye < -0.01]
+    if bad:
+        findings.append(_finding(
+            "IE.PAYE.004",
+            "HIGH",
+            "PAYE negative detection",
+            "One or more rows have negative PAYE.",
+            evidence={"count": len(bad)},
+            suggestion="Verify PAYE column; negative values may indicate refunds or mapping errors.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     neg = [r.employee_id for r in rows if r.net_pay < -0.01]
