@@ -102,6 +102,22 @@ def rule_paye_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
     return findings
 
 
+def rule_usc_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.usc < -0.01]
+    if bad:
+        findings.append(_finding(
+            "IE.USC.004",
+            "HIGH",
+            "USC negative detection",
+            "One or more rows have negative USC.",
+            evidence={"count": len(bad)},
+            suggestion="Verify USC column; negative values may indicate refunds or mapping errors.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     neg = [r.employee_id for r in rows if r.net_pay < -0.01]
