@@ -16,6 +16,12 @@ def _finding(rule_id: str, severity: str, title: str, description: str, **kw) ->
     return out
 
 
+def rule_sanity_004_deduction_breakdown_mismatch(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    # Requires deduction_breakdown and deductions_total per row; not in CanonicalPayrollRow schema.
+    # No-op until schema supports breakdown; return empty to satisfy engine.
+    return []
+
+
 def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     tol = 0.02
