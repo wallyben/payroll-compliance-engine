@@ -6,6 +6,7 @@ from core.rules.rules import (
     rule_gross_net_integrity,
     rule_sanity_002_negative_or_zero_gross,
     rule_sanity_003_impossible_or_negative_deductions,
+    rule_sanity_005_negative_net,
     rule_negative_or_zero_pay,
     rule_usc_deterministic_bounds,
     rule_prsi_deterministic_bounds,
@@ -24,6 +25,7 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings += rule_gross_net_integrity(rows)
     findings += rule_sanity_002_negative_or_zero_gross(rows)
     findings += rule_sanity_003_impossible_or_negative_deductions(rows)
+    findings += rule_sanity_005_negative_net(rows)
     findings += rule_negative_or_zero_pay(rows)
 
     # Phase 2 deterministic bounds (HIGH)

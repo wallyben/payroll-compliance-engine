@@ -70,6 +70,22 @@ def rule_sanity_003_impossible_or_negative_deductions(rows: List[CanonicalPayrol
     return findings
 
 
+def rule_sanity_005_negative_net(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.net_pay < -0.01]
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.005",
+            "HIGH",
+            "Negative net pay detection",
+            "One or more rows have negative net pay.",
+            evidence={"count": len(bad)},
+            suggestion="Verify net pay and deductions; negative net may indicate reversals or over-deduction.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_negative_or_zero_pay(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     neg = [r.employee_id for r in rows if r.net_pay < -0.01]
