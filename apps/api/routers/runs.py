@@ -9,7 +9,8 @@ from apps.api.schemas import RunOut, Finding
 from apps.api.deps import require_role
 from apps.api.settings import settings
 from apps.api.helpers import aggregate_severity_summary
-from apps.api.config_loader import load_rules_config
+from apps.api.config_loader import load_rules_config, REPORTS_DIR, report_path_for_run
+from fastapi.responses import FileResponse
 
 from core.ingest.loader import load_table
 from core.normalize.mapper import normalize
@@ -65,9 +66,8 @@ def create_run(
     db.refresh(run)
 
     # Build PDF report
-    pdf_dir = Path("storage/reports")
-    pdf_dir.mkdir(parents=True, exist_ok=True)
-    pdf_path = pdf_dir / f"run_{run.id}.pdf"
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+    pdf_path = REPORTS_DIR / f"run_{run.id}.pdf"
 
     build_pdf(
         str(pdf_path),
@@ -101,10 +101,10 @@ def get_report(
     run_id: int,
     user=Depends(require_role("admin", "auditor", "viewer")),
 ):
-    path = Path("storage/reports") / f"run_{run_id}.pdf"
-
+    try:
+        path = report_path_for_run(run_id)
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Report not found")
     if not path.exists():
         raise HTTPException(status_code=404, detail="Report not found")
-
-    # v1: returning path (in production you'd stream file)
-    return {"path": str(path.resolve())}
+    return FileResponse(path=path, filename=f"run_{run_id}.pdf")
