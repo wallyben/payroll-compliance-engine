@@ -8,6 +8,7 @@ from apps.api import models
 from apps.api.schemas import RunOut, Finding
 from apps.api.deps import require_role
 from apps.api.settings import settings
+from apps.api.helpers import aggregate_severity_summary
 
 from core.ingest.loader import load_table
 from core.normalize.mapper import normalize
@@ -50,14 +51,7 @@ def create_run(
     findings = run_all(rows, cfg)
     bundle = score_bundle(findings)
 
-    # Phase 3 — Deterministic severity summary
-    severity_summary = {
-        "HIGH": sum(1 for f in findings if f["severity"] == "HIGH"),
-        "MEDIUM": sum(1 for f in findings if f["severity"] == "MEDIUM"),
-        "LOW": sum(1 for f in findings if f["severity"] == "LOW"),
-        "TOTAL": len(findings),
-    }
-    
+    severity_summary = aggregate_severity_summary(findings)
 
     # Persist run
     run = models.Run(
