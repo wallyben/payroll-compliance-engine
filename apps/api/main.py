@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from apps.api.db import Base, engine
-from apps.api.routers import auth, uploads, runs, mappings
+from apps.api.routers import auth, uploads, runs, mappings, scan
 from apps.api.logging_config import configure_logging, request_logging_middleware
 
 Base.metadata.create_all(bind=engine)
@@ -21,3 +21,4 @@ app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(uploads.router, prefix="/uploads", tags=["uploads"])
 app.include_router(mappings.router, prefix="/mappings", tags=["mappings"])
 app.include_router(runs.router, prefix="/runs", tags=["runs"])
+app.include_router(scan.router, prefix="/scan", tags=["scan"])
