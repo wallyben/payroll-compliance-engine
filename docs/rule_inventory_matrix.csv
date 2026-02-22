@@ -1,34 +1,34 @@
-rule_id,category,description,required_fields,tax_year_dependent,config_table,implemented,test_fixture
-IE.SANITY.001,SANITY,Gross pay and deduction consistency (gross minus deductions vs net),gross_pay|net_pay|deductions_total,no,,no,
-IE.SANITY.002,SANITY,Negative or zero gross pay,gross_pay,no,,no,
-IE.SANITY.003,SANITY,Impossible or negative deduction values,gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted,no,,no,
-IE.SANITY.004,SANITY,Deduction breakdown sum mismatch (breakdown total != declared or gross minus net),gross_pay|net_pay|deduction_breakdown|deductions_total,no,,no,
-IE.SANITY.005,SANITY,Negative net pay detection,net_pay,no,,no,
-IE.SANITY.006,SANITY,Net pay inconsistency (gross minus deductions != net),gross_pay|deductions_total|net_pay,no,,no,
-IE.SANITY.007,SANITY,Net pay upper bound (net exceeds gross minus minimum deductions),gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted,no,,no,
-IE.SANITY.008,SANITY,Net equals gross while deductions present,gross_pay|net_pay|deductions_total,no,,no,
-IE.SANITY.009,SANITY,Deductions exceed gross,gross_pay|deductions_total|net_pay,no,,no,
-IE.MIN_WAGE.001,MIN_WAGE,Hourly rate below statutory minimum,hours_worked|gross_pay|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.USC.001,USC,USC band miscalculation,total_taxable_pay|usc_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.USC.002,USC,USC band ordering incorrect,total_taxable_pay|usc_breakdown|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.USC.003,USC,USC exemption limit breach (taxable pay below threshold but USC deducted),total_taxable_pay|usc_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.USC.004,USC,USC negative detection,usc_deducted|total_taxable_pay,no,,no,
-IE.USC.005,USC,USC applied when taxable pay zero,total_taxable_pay|usc_deducted,no,,no,
-IE.USC.006,USC,USC missing above threshold,total_taxable_pay|usc_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PRSI.001,PRSI,PRSI class mismatch detection,prsi_class|gross_pay|prsi_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PRSI.002,PRSI,PRSI threshold or rate breach by class,prsi_class|gross_pay|prsi_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PRSI.003,PRSI,PRSI negative detection,prsi_deducted|gross_pay,no,,no,
-IE.PRSI.004,PRSI,PRSI applied below threshold,prsi_class|gross_pay|prsi_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PRSI.005,PRSI,PRSI missing above threshold,prsi_class|gross_pay|prsi_deducted|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PAYE.001,PAYE,Negative or impossible PAYE amount,paye_tax|gross_pay|net_pay,no,,no,
-IE.PAYE.002,PAYE,PAYE vs net sanity (total deductions vs gross minus net),paye_tax|gross_pay|net_pay|usc_deducted|prsi_deducted|pension_ee,no,,no,
-IE.PAYE.003,PAYE,PAYE zero when taxable pay present,total_taxable_pay|paye_tax|tax_year,yes,ie_rates_{tax_year}.json,no,
-IE.PAYE.004,PAYE,PAYE negative detection,paye_tax,no,,no,
-IE.PAYE.005,PAYE,PAYE applied when taxable pay zero,total_taxable_pay|paye_tax,no,,no,
-IE.PAYSLIP.001,PAYSLIP,Missing itemised deductions,gross_pay|deduction_breakdown,no,,no,
-IE.PAYSLIP.002,PAYSLIP,Gross pay missing or zero,gross_pay,no,,no,
-IE.WORKING_TIME.001,WORKING_TIME,48-hour weekly average exceeded,hours_worked|reference_period,no,,no,
-IE.SSP.001,SSP,Statutory sick pay entitlement breach,sick_days_paid|tax_year,yes,ie_ssp_{tax_year}.json,no,
-IE.SSP.002,SSP,SSP eligibility breach,sick_days_paid|gross_pay|tax_year,yes,ie_ssp_{tax_year}.json,no,
-IE.AUTO_ENROL.001,AUTO_ENROL,Auto enrolment contribution mismatch,pension_ee|gross_pay|tax_year,yes,ie_pension_{tax_year}.json,no,
-IE.AUTO_ENROL.002,AUTO_ENROL,Auto enrolment eligibility breach,gross_pay|pension_ee|tax_year,yes,ie_pension_{tax_year}.json,no,
+"rule_id","category","description","required_fields","tax_year_dependent","config_table","implemented","test_fixture"
+"IE.SANITY.001","SANITY","Gross pay and deduction consistency (gross minus deductions vs net)","gross_pay|net_pay|deductions_total","no","","no",""
+"IE.SANITY.002","SANITY","Negative or zero gross pay","gross_pay","no","","yes",""
+"IE.SANITY.003","SANITY","Impossible or negative deduction values","gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted","no","","yes",""
+"IE.SANITY.004","SANITY","Deduction breakdown sum mismatch (breakdown total != declared or gross minus net)","gross_pay|net_pay|deduction_breakdown|deductions_total","no","","no",""
+"IE.SANITY.005","SANITY","Negative net pay detection","net_pay","no","","yes",""
+"IE.SANITY.006","SANITY","Net pay inconsistency (gross minus deductions != net)","gross_pay|deductions_total|net_pay","no","","no",""
+"IE.SANITY.007","SANITY","Net pay upper bound (net exceeds gross minus minimum deductions)","gross_pay|net_pay|paye_tax|usc_deducted|prsi_deducted","no","","no",""
+"IE.SANITY.008","SANITY","Net equals gross while deductions present","gross_pay|net_pay|deductions_total","no","","no",""
+"IE.SANITY.009","SANITY","Deductions exceed gross","gross_pay|deductions_total|net_pay","no","","no",""
+"IE.MIN_WAGE.001","MIN_WAGE","Hourly rate below statutory minimum","hours_worked|gross_pay|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.USC.001","USC","USC band miscalculation","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.USC.002","USC","USC band ordering incorrect","total_taxable_pay|usc_breakdown|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.USC.003","USC","USC exemption limit breach (taxable pay below threshold but USC deducted)","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.USC.004","USC","USC negative detection","usc_deducted|total_taxable_pay","no","","yes",""
+"IE.USC.005","USC","USC applied when taxable pay zero","total_taxable_pay|usc_deducted","no","","no",""
+"IE.USC.006","USC","USC missing above threshold","total_taxable_pay|usc_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PRSI.001","PRSI","PRSI class mismatch detection","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PRSI.002","PRSI","PRSI threshold or rate breach by class","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PRSI.003","PRSI","PRSI negative detection","prsi_deducted|gross_pay","no","","yes",""
+"IE.PRSI.004","PRSI","PRSI applied below threshold","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PRSI.005","PRSI","PRSI missing above threshold","prsi_class|gross_pay|prsi_deducted|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PAYE.001","PAYE","Negative or impossible PAYE amount","paye_tax|gross_pay|net_pay","no","","no",""
+"IE.PAYE.002","PAYE","PAYE vs net sanity (total deductions vs gross minus net)","paye_tax|gross_pay|net_pay|usc_deducted|prsi_deducted|pension_ee","no","","no",""
+"IE.PAYE.003","PAYE","PAYE zero when taxable pay present","total_taxable_pay|paye_tax|tax_year","yes","ie_rates_{tax_year}.json","no",""
+"IE.PAYE.004","PAYE","PAYE negative detection","paye_tax","no","","yes",""
+"IE.PAYE.005","PAYE","PAYE applied when taxable pay zero","total_taxable_pay|paye_tax","no","","no",""
+"IE.PAYSLIP.001","PAYSLIP","Missing itemised deductions","gross_pay|deduction_breakdown","no","","no",""
+"IE.PAYSLIP.002","PAYSLIP","Gross pay missing or zero","gross_pay","no","","no",""
+"IE.WORKING_TIME.001","WORKING_TIME","48-hour weekly average exceeded","hours_worked|reference_period","no","","no",""
+"IE.SSP.001","SSP","Statutory sick pay entitlement breach","sick_days_paid|tax_year","yes","ie_ssp_{tax_year}.json","no",""
+"IE.SSP.002","SSP","SSP eligibility breach","sick_days_paid|gross_pay|tax_year","yes","ie_ssp_{tax_year}.json","no",""
+"IE.AUTO_ENROL.001","AUTO_ENROL","Auto enrolment contribution mismatch","pension_ee|gross_pay|tax_year","yes","ie_pension_{tax_year}.json","no",""
+"IE.AUTO_ENROL.002","AUTO_ENROL","Auto enrolment eligibility breach","gross_pay|pension_ee|tax_year","yes","ie_pension_{tax_year}.json","no",""
