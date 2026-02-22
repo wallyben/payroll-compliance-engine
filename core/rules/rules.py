@@ -127,6 +127,22 @@ def rule_paye_003_zero_when_taxable_present(rows: List[CanonicalPayrollRow], cfg
     return findings
 
 
+def rule_paye_005_applied_when_taxable_zero(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.gross_pay < 0.01 and r.paye > 0.01]
+    if bad:
+        findings.append(_finding(
+            "IE.PAYE.005",
+            "HIGH",
+            "PAYE applied when taxable pay zero",
+            "One or more rows have PAYE deducted with zero or negligible taxable pay.",
+            evidence={"count": len(bad)},
+            suggestion="Verify gross pay and PAYE; PAYE should not apply when taxable pay is zero.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_paye_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     bad = [r.employee_id for r in rows if r.paye < -0.01]
