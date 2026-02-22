@@ -108,6 +108,27 @@ def rule_sanity_009_deductions_exceed_gross(rows: List[CanonicalPayrollRow]) -> 
     return findings
 
 
+def rule_payslip_001_missing_itemised(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    # Requires deduction_breakdown per row; not in CanonicalPayrollRow schema.
+    return []
+
+
+def rule_payslip_002_gross_missing_or_zero(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = [r.employee_id for r in rows if r.gross_pay <= 0.0]
+    if bad:
+        findings.append(_finding(
+            "IE.PAYSLIP.002",
+            "HIGH",
+            "Gross pay missing or zero",
+            "One or more rows have gross pay missing or zero.",
+            evidence={"count": len(bad)},
+            suggestion="Verify gross pay column.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     tol = 0.02

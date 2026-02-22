@@ -9,6 +9,8 @@ from core.rules.rules import (
     rule_sanity_007_net_upper_bound,
     rule_sanity_008_net_equals_gross_with_deductions,
     rule_sanity_009_deductions_exceed_gross,
+    rule_payslip_001_missing_itemised,
+    rule_payslip_002_gross_missing_or_zero,
     rule_gross_net_integrity,
     rule_sanity_002_negative_or_zero_gross,
     rule_sanity_003_impossible_or_negative_deductions,
@@ -43,6 +45,8 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
     findings += rule_sanity_007_net_upper_bound(rows)
     findings += rule_sanity_008_net_equals_gross_with_deductions(rows)
     findings += rule_sanity_009_deductions_exceed_gross(rows)
+    findings += rule_payslip_001_missing_itemised(rows)
+    findings += rule_payslip_002_gross_missing_or_zero(rows)
     findings += rule_gross_net_integrity(rows)
     findings += rule_sanity_002_negative_or_zero_gross(rows)
     findings += rule_sanity_003_impossible_or_negative_deductions(rows)
