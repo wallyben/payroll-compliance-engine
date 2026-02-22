@@ -105,6 +105,28 @@ def rule_paye_001_negative_or_impossible(rows: List[CanonicalPayrollRow]) -> Lis
     return findings
 
 
+def rule_paye_003_zero_when_taxable_present(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
+    findings = []
+    tax_cfg = cfg.get("income_tax", {})
+    band_annual = tax_cfg.get("standard_rate_band_single", 44000)
+    monthly_threshold = band_annual / 12.0
+    bad = [
+        r.employee_id for r in rows
+        if r.gross_pay > monthly_threshold and r.paye < 0.01
+    ]
+    if bad:
+        findings.append(_finding(
+            "IE.PAYE.003",
+            "HIGH",
+            "PAYE zero when taxable pay present",
+            "One or more rows have taxable pay above threshold but zero PAYE.",
+            evidence={"count": len(bad), "monthly_threshold": monthly_threshold},
+            suggestion="Verify PAYE calculation; PAYE expected when pay exceeds tax band.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_paye_004_negative(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     bad = [r.employee_id for r in rows if r.paye < -0.01]
