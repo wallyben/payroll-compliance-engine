@@ -1,0 +1,20 @@
+Payroll Compliance Engine
+
+Architecture Rules:
+- core/ contains deterministic compliance logic only.
+- apps/api contains orchestration only.
+- No compliance logic inside routers.
+- No scoring logic in API.
+- No side effects inside rule engine.
+
+Editing Rules:
+- Do not modify rule behavior without updating tests.
+- Do not refactor entire repo.
+- Modify minimal files.
+- Remove .bak files before expanding features.
+- Always preserve phase freeze constraints.
+
+Before implementing changes:
+1. Propose plan.
+2. List affected files.
+3. Implement minimal patch.
