@@ -65,6 +65,49 @@ def rule_sanity_007_net_upper_bound(rows: List[CanonicalPayrollRow]) -> List[dic
     return findings
 
 
+def rule_sanity_008_net_equals_gross_with_deductions(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    tol = 0.01
+    bad = []
+    for r in rows:
+        known = (r.paye or 0.0) + (r.usc or 0.0) + (r.prsi_ee or 0.0) + (r.pension_ee or 0.0)
+        if known < tol:
+            continue
+        if abs(r.net_pay - r.gross_pay) < tol:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.008",
+            "HIGH",
+            "Net equals gross while deductions present",
+            "One or more rows have net pay equal to gross but deductions are present.",
+            evidence={"count": len(bad)},
+            suggestion="Verify net and deduction columns.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
+def rule_sanity_009_deductions_exceed_gross(rows: List[CanonicalPayrollRow]) -> List[dict]:
+    findings = []
+    bad = []
+    for r in rows:
+        known = (r.paye or 0.0) + (r.usc or 0.0) + (r.prsi_ee or 0.0) + (r.pension_ee or 0.0)
+        if known > r.gross_pay + 0.01:
+            bad.append(r.employee_id)
+    if bad:
+        findings.append(_finding(
+            "IE.SANITY.009",
+            "HIGH",
+            "Deductions exceed gross",
+            "One or more rows have total deductions exceeding gross pay.",
+            evidence={"count": len(bad)},
+            suggestion="Verify deduction and gross columns.",
+            employee_refs=bad[:200],
+        ))
+    return findings
+
+
 def rule_sanity_001_gross_deduction_consistency(rows: List[CanonicalPayrollRow]) -> List[dict]:
     findings = []
     tol = 0.02
