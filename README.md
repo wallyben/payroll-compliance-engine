@@ -44,3 +44,22 @@ Update these on regulatory changes and bump `RULESET_VERSION` (e.g. `IE-2026.02`
 4. `POST /runs` → run compliance checks
 5. `GET /runs/{run_id}/report.pdf` → download report
 
+## Demo Data
+
+Example payroll CSV files for demos and testing are in **`demo_data/`**:
+
+| File | Purpose | Expected outcome |
+|------|---------|------------------|
+| **clean_payroll.csv** | Valid payroll: no net>gross, no negative net, no duplicates, min wage OK, PRSI class present. | Zero or few findings; when 0 findings: PASSED banner and Compliance Certificate available. |
+| **minor_issues_payroll.csv** | Small issues: one minimum-wage breach, one duplicate employee_id. | MEDIUM/HIGH findings; no certificate. |
+| **severe_issues_payroll.csv** | Multiple violations: net>gross, negative net, duplicate employee, minimum wage breach. | CRITICAL/HIGH findings; large exposure; no certificate. |
+
+**How to run the examples**
+
+1. Start the backend: `uvicorn apps.api.main:app --reload` (port 8000).
+2. Start the frontend: from `frontend/` run `npm run dev` (port 5173).
+3. Open http://localhost:5173 → **Upload** → choose a file from `demo_data/` → **Run Validation**.
+4. Use **Results** to see findings and **Summary** to see exposure and export report or certificate (when 0 findings).
+
+For a guided 5-minute demo, see **[docs/demo_walkthrough.md](docs/demo_walkthrough.md)**.
+

@@ -3,6 +3,7 @@ import io
 import json
 import uuid
 from dataclasses import asdict
+from datetime import datetime, timezone
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -11,7 +12,7 @@ from fastapi.responses import StreamingResponse
 
 from apps.api.config_loader import load_rules_config
 from apps.api.helpers.scan_summary import build_scan_summary, split_findings
-from apps.api.helpers.report_builder import build_scan_report_pdf
+from apps.api.helpers.report_builder import build_scan_report_pdf, build_certificate_pdf
 from core.normalize.mapper import normalize
 from core.reporting.hash_utils import compute_sha256_bytes
 from core.reporting.exposure_engine import build_exposure_report
@@ -29,7 +30,8 @@ def _csv_to_mapping(df: pd.DataFrame) -> Dict[str, str]:
     """Build canonical mapping from CSV columns. Uses identity for columns that match canonical names."""
     required = {"employee_id", "gross_pay", "net_pay"}
     canon_fields = {"employee_id", "employee_name", "ppsn", "pay_date", "period_start", "period_end",
-                    "gross_pay", "net_pay", "paye", "usc", "prsi_ee", "prsi_er", "pension_ee", "pension_er", "hours"}
+                    "gross_pay", "net_pay", "paye", "usc", "prsi_ee", "prsi_er", "pension_ee", "pension_er", "hours",
+                    "total_deductions", "prsi_class", "weekly_earnings", "age"}
     mapping = {}
     for col in df.columns:
         c = (col or "").strip()
@@ -75,6 +77,7 @@ def scan_upload(file: UploadFile = File(...)):
     certificate = build_certificate(exposure_report, findings)
     ruleset_version = config.get("ruleset_version", "IE-2026.01")
     run_id = str(uuid.uuid4())
+    validated_at = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     bureau_summary = build_bureau_summary(run_id, ruleset_version, exposure_report, certificate)
 
     return {
@@ -83,15 +86,15 @@ def scan_upload(file: UploadFile = File(...)):
         "revenue_findings": revenue_findings,
         "all_findings": findings,
         "run_id": run_id,
+        "validated_at": validated_at,
         "input_hash": input_hash,
         "bureau_summary": asdict(bureau_summary),
         "exposure_breakdown": asdict(exposure_report),
     }
 
 
-@router.get("/report")
-async def scan_report(request: Request):
-    """GET /scan/report: JSON body (same shape as POST /scan response) -> PDF stream."""
+async def _report_from_body(request: Request):
+    """Shared: read JSON body, return PDF stream. Certificate when all_findings empty."""
     raw = await request.body()
     if not raw:
         raise HTTPException(status_code=400, detail="JSON body required with scan response shape")
@@ -99,10 +102,28 @@ async def scan_report(request: Request):
         body = json.loads(raw)
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid JSON body")
-    pdf_bytes = build_scan_report_pdf(body)
+    all_findings = body.get("all_findings") or []
+    if len(all_findings) == 0:
+        pdf_bytes = build_certificate_pdf(body)
+        filename = "compliance_certificate.pdf"
+    else:
+        pdf_bytes = build_scan_report_pdf(body)
+        filename = "scan_report.pdf"
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",
-        headers={"Content-Disposition": "attachment; filename=scan_report.pdf"},
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+
+
+@router.get("/report")
+async def scan_report_get(request: Request):
+    """GET /scan/report: JSON body -> PDF stream."""
+    return await _report_from_body(request)
+
+
+@router.post("/report")
+async def scan_report_post(request: Request):
+    """POST /scan/report: JSON body -> PDF stream (for UI)."""
+    return await _report_from_body(request)
 
