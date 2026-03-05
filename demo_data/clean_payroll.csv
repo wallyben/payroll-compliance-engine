@@ -1,0 +1,4 @@
+employee_id,gross_pay,net_pay,hours,paye,usc,prsi_ee,prsi_er,pension_ee,pension_er,prsi_class
+E001,600.00,450.00,40,116.00,9.00,25.00,68.00,0,0,A
+E002,800.00,610.00,40,142.00,15.00,33.00,91.00,0,0,A
+E003,1200.00,920.00,40,203.00,27.00,50.00,136.00,0,0,A
