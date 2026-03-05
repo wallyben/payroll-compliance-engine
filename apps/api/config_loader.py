@@ -1,4 +1,4 @@
-﻿"""Deterministic config path resolution. No CWD-relative paths."""
+"""Deterministic config path resolution. No CWD-relative paths."""
 
 import json
 from pathlib import Path
@@ -13,8 +13,11 @@ REPORTS_DIR = (_PROJECT_ROOT / "storage" / "reports").resolve()
 
 
 def load_rules_config() -> dict:
-    """Load rules config from deterministic path."""
-    return json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8-sig"))
+    """Load rules config from deterministic path. Validates config contract."""
+    config = json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8-sig"))
+    from core.rules.config_contract import validate_config_contract
+    validate_config_contract(config)
+    return config
 
 
 def report_path_for_run(run_id: int) -> Path:
