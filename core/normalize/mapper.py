@@ -39,10 +39,18 @@ def normalize(
 
             for k in [
                 "gross_pay", "net_pay", "paye", "usc",
-                "prsi_ee", "prsi_er", "pension_ee", "pension_er"
+                "prsi_ee", "prsi_er", "pension_ee", "pension_er",
+                "total_deductions", "weekly_earnings", "bik_value", "hours",
             ]:
                 if k in data and data[k] is not None:
                     data[k] = float(data[k])
+
+            if "age" in data and data["age"] is not None:
+                data["age"] = int(float(data["age"]))
+
+            for k in ["prsi_class", "allowance_type", "job_title", "pay_period"]:
+                if k in data and data[k] is not None:
+                    data[k] = str(data[k]).strip() or None
 
             # ---- DATE NORMALIZATION ----
             for date_field in ["pay_date", "period_start", "period_end"]:

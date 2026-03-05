@@ -22,3 +22,11 @@ class CanonicalPayrollRow(BaseModel):
     pension_er: float = 0.0
 
     hours: Optional[float] = None
+    total_deductions: Optional[float] = None  # optional; can be derived from paye+usc+prsi_ee+pension_ee
+    prsi_class: Optional[str] = None
+    weekly_earnings: Optional[float] = None
+    age: Optional[int] = None
+    bik_value: Optional[float] = None
+    allowance_type: Optional[str] = None
+    job_title: Optional[str] = None
+    pay_period: Optional[str] = None

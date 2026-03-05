@@ -1,6 +1,8 @@
 """Upload-based payroll risk scanner. No auth, no DB writes."""
 import io
 import json
+import uuid
+from dataclasses import asdict
 from typing import Any, Dict, List
 
 import pandas as pd
@@ -11,6 +13,10 @@ from apps.api.config_loader import load_rules_config
 from apps.api.helpers.scan_summary import build_scan_summary, split_findings
 from apps.api.helpers.report_builder import build_scan_report_pdf
 from core.normalize.mapper import normalize
+from core.reporting.hash_utils import compute_sha256_bytes
+from core.reporting.exposure_engine import build_exposure_report
+from core.reporting.certificate_builder import build_certificate
+from core.reporting.bureau_summary import build_bureau_summary
 from core.rules.engine import run_all
 
 router = APIRouter()
@@ -52,21 +58,34 @@ def scan_upload(file: UploadFile = File(...)):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     try:
-        rows, _ = normalize(df, mapping)
+        rows, invalid_rows = normalize(df, mapping)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     if not rows:
         raise HTTPException(status_code=400, detail="No valid rows after normalization")
     config = load_rules_config()
     config["scan_profile"] = SCAN_PROFILE
-    findings = run_all(rows, config)
+    findings = run_all(rows, config, invalid_rows=invalid_rows)
     summary = build_scan_summary(findings)
     auto_enrolment_findings, revenue_findings = split_findings(findings)
+
+    # Phase 4 — Bureau Shield reporting (deterministic; run_id generated in API layer only)
+    input_hash = compute_sha256_bytes(content)
+    exposure_report = build_exposure_report(findings)
+    certificate = build_certificate(exposure_report, findings)
+    ruleset_version = config.get("ruleset_version", "IE-2026.01")
+    run_id = str(uuid.uuid4())
+    bureau_summary = build_bureau_summary(run_id, ruleset_version, exposure_report, certificate)
+
     return {
         "summary": summary,
         "auto_enrolment_findings": auto_enrolment_findings,
         "revenue_findings": revenue_findings,
         "all_findings": findings,
+        "run_id": run_id,
+        "input_hash": input_hash,
+        "bureau_summary": asdict(bureau_summary),
+        "exposure_breakdown": asdict(exposure_report),
     }
 
 

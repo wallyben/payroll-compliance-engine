@@ -1,8 +1,34 @@
 from __future__ import annotations
 import json
 from pathlib import Path
-from typing import List, Dict, Any, Callable, Tuple
+from typing import List, Dict, Any, Callable, Tuple, Optional
 from core.normalize.schema import CanonicalPayrollRow
+
+from core.rules.arithmetic.row_rules import (
+    rule_ie_net_001,
+    rule_ie_net_002,
+    rule_ie_deduct_001,
+    rule_ie_pension_002,
+    rule_ie_pay_002,
+)
+from core.rules.arithmetic.file_rules import rule_ie_totals_001
+from core.rules.operational.row_rules import (
+    rule_ie_minwage_001,
+    rule_ie_pay_001,
+    rule_ie_net_003,
+    rule_ie_prsi_001,
+    rule_ie_prsi_004,
+)
+from core.rules.operational.file_rules import rule_ie_data_001
+from core.rules.compliance.row_rules import (
+    rule_ie_usc_001,
+    rule_ie_usc_002,
+    rule_ie_autoenrol_001,
+    rule_ie_autoenrol_002,
+    rule_ie_bik_001,
+    rule_ie_prsi_003,
+)
+from core.rules.compliance.data_rules import rule_ie_data_002_from_invalid_rows
 
 from core.rules.rules import (
     rule_sanity_001_gross_deduction_consistency,
@@ -64,14 +90,53 @@ def _run_with_profile(
     return findings
 
 
-def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dict]:
+# IE-2026.01 rule list: deterministic order — row rules (arithmetic, operational, compliance) then file rules
+_IE_2026_RULE_LIST: List[Tuple[List[str], Callable]] = [
+    (["IE.NET.001"], lambda r, c: rule_ie_net_001(r)),
+    (["IE.NET.002"], lambda r, c: rule_ie_net_002(r)),
+    (["IE.DEDUCT.001"], lambda r, c: rule_ie_deduct_001(r)),
+    (["IE.PENSION.002"], lambda r, c: rule_ie_pension_002(r)),
+    (["IE.PAY.002"], lambda r, c: rule_ie_pay_002(r)),
+    (["IE.MINWAGE.001"], lambda r, c: rule_ie_minwage_001(r, c)),
+    (["IE.PAY.001"], lambda r, c: rule_ie_pay_001(r)),
+    (["IE.NET.003"], lambda r, c: rule_ie_net_003(r)),
+    (["IE.PRSI.001"], lambda r, c: rule_ie_prsi_001(r)),
+    (["IE.PRSI.004"], lambda r, c: rule_ie_prsi_004(r, c)),
+    (["IE.USC.001"], lambda r, c: rule_ie_usc_001(r, c)),
+    (["IE.USC.002"], lambda r, c: rule_ie_usc_002(r, c)),
+    (["IE.AUTOENROL.001"], lambda r, c: rule_ie_autoenrol_001(r, c)),
+    (["IE.AUTOENROL.002"], lambda r, c: rule_ie_autoenrol_002(r, c)),
+    (["IE.BIK.001"], lambda r, c: rule_ie_bik_001(r)),
+    (["IE.PRSI.003"], lambda r, c: rule_ie_prsi_003(r, c)),
+    (["IE.TOTALS.001"], lambda r, c: rule_ie_totals_001(r)),
+    (["IE.DATA.001"], lambda r, c: rule_ie_data_001(r)),
+]
+
+
+def run_all(
+    rows: List[CanonicalPayrollRow],
+    config: Dict[str, Any],
+    invalid_rows: Optional[List[dict]] = None,
+) -> List[dict]:
     profile_name = config.get("scan_profile")
     if profile_name:
         profile = _load_scan_profile(profile_name)
         active_rules = set(profile.get("active_rules", []))
-        return _run_with_profile(rows, config, active_rules, _RULE_LIST)
+        findings: List[dict] = []
+        if invalid_rows and any(rid in active_rules for rid in ("IE.DATA.002",)):
+            findings += rule_ie_data_002_from_invalid_rows(invalid_rows)
+        findings += _run_with_profile(rows, config, active_rules, _IE_2026_RULE_LIST)
+        findings += _run_with_profile(rows, config, active_rules, _RULE_LIST)
+        return findings
 
-    findings: List[dict] = []
+    findings = []
+    # 1) Validate required fields (IE.DATA.002)
+    if invalid_rows:
+        findings += rule_ie_data_002_from_invalid_rows(invalid_rows)
+    # 2–3) IE-2026.01 row then file rules (deterministic order)
+    for _, runner in _IE_2026_RULE_LIST:
+        findings += runner(rows, config)
+    # Legacy rules
     findings += rule_sanity_001_gross_deduction_consistency(rows)
     findings += rule_sanity_004_deduction_breakdown_mismatch(rows)
     findings += rule_sanity_006_net_inconsistency(rows)

@@ -1,4 +1,4 @@
-﻿{
+{
   "ruleset_version": "IE-2026.01",
 
   "usc": {
@@ -23,8 +23,10 @@
       "employee_rate_pre_2026_10_01": 0.042,
       "employer_rate_lower": 0.0915,
       "employer_rate_higher": 0.114,
-      "weekly_threshold_for_higher": 552
-    }
+      "weekly_threshold_for_higher": 552,
+      "weekly_threshold_lower": 352
+    },
+    "valid_prsi_classes": ["A", "B", "C", "D", "E", "H", "J", "K", "M", "P", "S"]
   },
 
   "minimum_wage": {
