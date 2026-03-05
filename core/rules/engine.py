@@ -113,6 +113,16 @@ _IE_2026_RULE_LIST: List[Tuple[List[str], Callable]] = [
 ]
 
 
+def _sort_findings(findings: List[dict]) -> List[dict]:
+    """Sort findings deterministically: rule_id, then first employee_id in employee_refs."""
+    def _key(f: dict) -> tuple:
+        rule_id = f.get("rule_id") or ""
+        refs = f.get("employee_refs") or []
+        first_emp = refs[0] if refs else ""
+        return (rule_id, str(first_emp))
+    return sorted(findings, key=_key)
+
+
 def run_all(
     rows: List[CanonicalPayrollRow],
     config: Dict[str, Any],
@@ -127,7 +137,7 @@ def run_all(
             findings += rule_ie_data_002_from_invalid_rows(invalid_rows)
         findings += _run_with_profile(rows, config, active_rules, _IE_2026_RULE_LIST)
         findings += _run_with_profile(rows, config, active_rules, _RULE_LIST)
-        return findings
+        return _sort_findings(findings)
 
     findings = []
     # 1) Validate required fields (IE.DATA.002)
@@ -167,7 +177,7 @@ def run_all(
     findings += rule_auto_enrolment_deterministic(rows, config)
     findings += rule_usc_plausibility(rows, config)
     findings += rule_prsi_plausibility_class_a(rows, config)
-    return findings
+    return _sort_findings(findings)
 
 
 def _runner(rows: List[CanonicalPayrollRow], config: Dict[str, Any], fn: Callable, takes_config: bool = False):
