@@ -1,4 +1,4 @@
-"""API-layer helpers. No compliance or scoring logic."""
+﻿"""API-layer helpers. No compliance or scoring logic."""
 
 from typing import Any, Dict, List
 

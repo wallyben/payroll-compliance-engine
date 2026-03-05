@@ -1,4 +1,4 @@
-"""Deterministic config path resolution. No CWD-relative paths."""
+﻿"""Deterministic config path resolution. No CWD-relative paths."""
 
 import json
 from pathlib import Path
@@ -14,7 +14,7 @@ REPORTS_DIR = (_PROJECT_ROOT / "storage" / "reports").resolve()
 
 def load_rules_config() -> dict:
     """Load rules config from deterministic path."""
-    return json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8"))
+    return json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8-sig"))
 
 
 def report_path_for_run(run_id: int) -> Path:
@@ -23,3 +23,4 @@ def report_path_for_run(run_id: int) -> Path:
     if not path.is_relative_to(REPORTS_DIR):
         raise ValueError("report path would escape reports directory")
     return path
+

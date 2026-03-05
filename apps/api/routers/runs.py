@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+﻿from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 import json
 from pathlib import Path
@@ -8,7 +8,7 @@ from apps.api import models
 from apps.api.schemas import RunOut, Finding
 from apps.api.deps import require_role
 from apps.api.settings import settings
-from apps.api.helpers import aggregate_severity_summary
+from apps.api.helpers import aggregate_severity_summary  # resolved via helpers.py module
 from apps.api.config_loader import load_rules_config, REPORTS_DIR, report_path_for_run
 from fastapi.responses import FileResponse
 
@@ -108,3 +108,4 @@ def get_report(
     if not path.exists():
         raise HTTPException(status_code=404, detail="Report not found")
     return FileResponse(path=path, filename=f"run_{run_id}.pdf")
+
