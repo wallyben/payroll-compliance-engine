@@ -39,7 +39,8 @@
     "eligibility": {
       "age_min": 23,
       "age_max": 60,
-      "annual_earnings_min": 20000
+      "annual_earnings_min": 20000,
+      "minimum_contribution_rate": 0.01
     }
   }
 }
