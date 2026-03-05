@@ -11,6 +11,10 @@
     "IE.PRSI.001",
     "IE.PRSI.002",
     "IE.AUTO_ENROL.001",
-    "IE.AUTO_ENROL.002"
+    "IE.AUTO_ENROL.002",
+    "IE.NET.001",
+    "IE.NET.002",
+    "IE.DATA.001",
+    "IE.MINWAGE.001"
   ]
 }
