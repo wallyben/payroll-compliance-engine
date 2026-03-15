@@ -39,7 +39,8 @@ def normalize(
 
             for k in [
                 "gross_pay", "net_pay", "paye", "usc",
-                "prsi_ee", "prsi_er", "pension_ee", "pension_er"
+                "prsi_ee", "prsi_er", "pension_ee", "pension_er",
+                "hours", "hourly_rate",
             ]:
                 if k in data and data[k] is not None:
                     data[k] = float(data[k])
