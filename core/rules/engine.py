@@ -9,7 +9,6 @@ from core.normalize.schema import CanonicalPayrollRow
 from core.rules.rules import (
     rule_sanity_001_gross_deduction_consistency,
     rule_sanity_004_deduction_breakdown_mismatch,
-    rule_sanity_006_net_inconsistency,
     rule_sanity_007_net_upper_bound,
     rule_sanity_008_net_equals_gross_with_deductions,
     rule_sanity_009_deductions_exceed_gross,
@@ -54,7 +53,6 @@ from core.rules.rules import (
 RULE_ORDER: tuple[str, ...] = (
     "rule_sanity_001_gross_deduction_consistency",
     "rule_sanity_004_deduction_breakdown_mismatch",
-    "rule_sanity_006_net_inconsistency",
     "rule_sanity_007_net_upper_bound",
     "rule_sanity_008_net_equals_gross_with_deductions",
     "rule_sanity_009_deductions_exceed_gross",
@@ -117,7 +115,6 @@ def run_all(rows: List[CanonicalPayrollRow], config: Dict[str, Any]) -> List[dic
 
     findings += rule_sanity_001_gross_deduction_consistency(rows)
     findings += rule_sanity_004_deduction_breakdown_mismatch(rows)
-    findings += rule_sanity_006_net_inconsistency(rows)
     findings += rule_sanity_007_net_upper_bound(rows)
     findings += rule_sanity_008_net_equals_gross_with_deductions(rows)
     findings += rule_sanity_009_deductions_exceed_gross(rows)
