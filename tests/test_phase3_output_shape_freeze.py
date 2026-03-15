@@ -1,4 +1,6 @@
-﻿from apps.api.schemas import RunOut, Finding
+﻿import json
+from apps.api.schemas import RunOut, Finding
+from core.security.crypto import sha256_of_text
 
 def test_phase3_runout_output_shape_freeze():
 
@@ -25,7 +27,8 @@ def test_phase3_runout_output_shape_freeze():
         invalid_rows=[],
         risk_points=5,
         compliance_score=95.0,
-        severity_summary={"HIGH":1,"MEDIUM":0,"LOW":0,"TOTAL":1}
+        severity_summary={"HIGH":1,"MEDIUM":0,"LOW":0,"TOTAL":1},
+        findings_hash=sha256_of_text(json.dumps(findings, sort_keys=True)),
     )
 
     expected_keys = {
@@ -39,6 +42,7 @@ def test_phase3_runout_output_shape_freeze():
         "risk_points",
         "compliance_score",
         "severity_summary",
+        "findings_hash",
     }
 
     assert set(run.model_dump().keys()) == expected_keys

@@ -41,6 +41,7 @@ from core.normalize.mapper import normalize
 from core.reporting.pdf import build_pdf
 from core.rules.engine import load_ie_config, run_all
 from core.scoring.risk import score_bundle
+from core.security.crypto import sha256_of_text
 
 # ---------------------------------------------------------------------------
 # Fixture paths and mapping
@@ -498,8 +499,9 @@ def test_findings_json_score_bundle_matches_pipeline():
 # ---------------------------------------------------------------------------
 
 
-def test_runout_constructed_from_pipeline():
-    run = RunOut(
+def _make_run_out(**overrides):
+    """Helper: construct a RunOut from pipeline outputs with findings_hash."""
+    defaults = dict(
         id=1,
         upload_id=1,
         mapping_id=1,
@@ -510,7 +512,14 @@ def test_runout_constructed_from_pipeline():
         risk_points=_bundle["risk_points"],
         compliance_score=_bundle["compliance_score"],
         severity_summary=_severity_summary,
+        findings_hash=sha256_of_text(json.dumps(_findings, sort_keys=True)),
     )
+    defaults.update(overrides)
+    return RunOut(**defaults)
+
+
+def test_runout_constructed_from_pipeline():
+    run = _make_run_out()
     data = run.model_dump()
     assert data["risk_points"] == _EXPECTED_RISK_POINTS
     assert data["compliance_score"] == _EXPECTED_COMPLIANCE_SCORE
@@ -518,17 +527,20 @@ def test_runout_constructed_from_pipeline():
 
 
 def test_runout_findings_are_finding_objects():
-    run = RunOut(
-        id=1,
-        upload_id=1,
-        mapping_id=1,
-        ruleset_version="IE-2026.01",
-        findings=[Finding(**f) for f in _findings],
-        counts={"total": len(_rows), "valid": len(_rows), "invalid": 0},
-        invalid_rows=[],
-        risk_points=_bundle["risk_points"],
-        compliance_score=_bundle["compliance_score"],
-        severity_summary=_severity_summary,
-    )
+    run = _make_run_out()
     assert all(isinstance(f, Finding) for f in run.findings)
     assert len(run.findings) == len(_EXPECTED_FINDINGS)
+
+
+def test_runout_findings_hash_is_present():
+    """RunOut must expose a non-empty findings_hash string."""
+    run = _make_run_out()
+    assert isinstance(run.findings_hash, str)
+    assert len(run.findings_hash) == 64  # SHA256 hex = 64 chars
+
+
+def test_runout_findings_hash_is_deterministic():
+    """Same findings must produce the same hash in RunOut on repeated construction."""
+    run1 = _make_run_out()
+    run2 = _make_run_out()
+    assert run1.findings_hash == run2.findings_hash

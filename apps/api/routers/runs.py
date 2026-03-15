@@ -17,6 +17,7 @@ from core.normalize.mapper import normalize
 from core.rules.engine import run_all
 from core.scoring.risk import score_bundle
 from core.reporting.pdf import build_pdf
+from core.security.crypto import sha256_of_text
 
 router = APIRouter()
 
@@ -50,6 +51,12 @@ def create_run(
 
     severity_summary = aggregate_severity_summary(findings)
 
+    # Integrity hash — deterministic SHA256 over the findings list.
+    # sort_keys=True guarantees identical JSON for identical findings regardless
+    # of dict-insertion order, keeping the hash stable across Python versions.
+    findings_for_hash = json.dumps(findings, sort_keys=True)
+    findings_hash = sha256_of_text(findings_for_hash)
+
     # Persist run
     run = models.Run(
         upload_id=upload_id,
@@ -59,6 +66,7 @@ def create_run(
             "score_bundle": bundle,
             "findings": findings,
         }, sort_keys=True),
+        findings_hash=findings_hash,
     )
 
     db.add(run)
@@ -95,7 +103,8 @@ def create_run(
         invalid_rows=invalid_rows[:50],
         risk_points=bundle["risk_points"],
         compliance_score=bundle["compliance_score"],
-        severity_summary=severity_summary,  # safety cap
+        severity_summary=severity_summary,
+        findings_hash=run.findings_hash,
     )
 
 

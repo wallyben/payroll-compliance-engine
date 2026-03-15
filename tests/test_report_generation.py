@@ -32,6 +32,7 @@ from apps.api.helpers import aggregate_severity_summary
 from apps.api.schemas import Finding, RunOut
 from core.reporting.pdf import build_pdf
 from core.scoring.risk import score_bundle
+from core.security.crypto import sha256_of_text
 
 # ---------------------------------------------------------------------------
 # Shared fixtures
@@ -48,6 +49,7 @@ _REQUIRED_RUNOUT_KEYS = {
     "risk_points",
     "compliance_score",
     "severity_summary",
+    "findings_hash",
 }
 
 _REQUIRED_FINDING_KEYS = {
@@ -89,6 +91,7 @@ def _make_run_out(findings: List[dict]) -> RunOut:
         risk_points=bundle["risk_points"],
         compliance_score=bundle["compliance_score"],
         severity_summary=severity_summary,
+        findings_hash=sha256_of_text(json.dumps(findings, sort_keys=True)),
     )
 
 

@@ -1,4 +1,6 @@
-﻿from apps.api.schemas import RunOut, Finding
+﻿import json
+from apps.api.schemas import RunOut, Finding
+from core.security.crypto import sha256_of_text
 
 def test_phase3_severity_summary_counts():
 
@@ -26,7 +28,8 @@ def test_phase3_severity_summary_counts():
         invalid_rows=[],
         risk_points=10,
         compliance_score=75.0,
-        severity_summary=summary
+        severity_summary=summary,
+        findings_hash=sha256_of_text(json.dumps(findings, sort_keys=True)),
     )
 
     assert run.severity_summary == summary
