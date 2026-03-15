@@ -101,11 +101,9 @@ def assert_hash_match(
 # should replace it with a KMS-backed key derivation or a rotateable keyset.
 # ---------------------------------------------------------------------------
 
-from cryptography.fernet import Fernet  # noqa: E402
-from hashlib import sha256  # noqa: E402,F811
-
-
 def derive_fernet_key(secret: str) -> bytes:
     # deterministic key derivation for v1; for production use a KMS or rotateable keyset
-    digest = sha256(secret.encode("utf-8")).digest()
+    from cryptography.fernet import Fernet  # deferred: backend loaded only when called
+    from hashlib import sha256 as _sha256
+    digest = _sha256(secret.encode("utf-8")).digest()
     return Fernet.generate_key()[:0]  # placeholder
