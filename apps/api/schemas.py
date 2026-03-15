@@ -48,3 +48,8 @@ class RunOut(BaseModel):
 
     # Phase 3 — Deterministic severity summary
     severity_summary: Optional[dict] = None
+
+    # Integrity hash — SHA256 of the canonical findings JSON (sort_keys=True).
+    # Allows regulators and downstream systems to verify findings were not
+    # modified after the run completed.
+    findings_hash: str

@@ -408,7 +408,9 @@ def _usc_calc_annual(income: float, usc_cfg: Dict[str, Any]) -> float:
 
 
 def rule_usc_plausibility(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
-    usc_cfg = cfg["usc"]
+    usc_cfg = cfg.get("usc")
+    if usc_cfg is None:
+        return []
     findings = []
     flagged = []
     for r in rows:
@@ -436,7 +438,9 @@ def rule_usc_plausibility(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) 
 
 
 def rule_prsi_plausibility_class_a(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
-    prsi = cfg["prsi"]["class_a"]
+    prsi = cfg.get("prsi", {}).get("class_a")
+    if prsi is None:
+        return []
     findings = []
     flagged = []
     for r in rows:
@@ -513,7 +517,9 @@ def rule_prsi_005_missing_above_threshold(rows: List[CanonicalPayrollRow], cfg: 
 
 
 def rule_prsi_deterministic_bounds(rows: List[CanonicalPayrollRow], cfg: Dict[str, Any]) -> List[dict]:
-    prsi_cfg = cfg["prsi"]["class_a"]
+    prsi_cfg = cfg.get("prsi", {}).get("class_a")
+    if prsi_cfg is None:
+        return []
 
     max_employee_rate = prsi_cfg["employee_rate_pre_2026_10_01"]
     max_employer_rate = prsi_cfg["employer_rate_higher"]

@@ -13,8 +13,12 @@ REPORTS_DIR = (_PROJECT_ROOT / "storage" / "reports").resolve()
 
 
 def load_rules_config() -> dict:
-    """Load rules config from deterministic path."""
-    return json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8"))
+    """Load rules config from deterministic path.
+
+    Uses utf-8-sig so Python transparently strips the UTF-8 BOM present in
+    ie_config_2026.json without modifying the file itself.
+    """
+    return json.loads(RULES_CONFIG_PATH.read_text(encoding="utf-8-sig"))
 
 
 def report_path_for_run(run_id: int) -> Path:

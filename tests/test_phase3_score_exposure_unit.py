@@ -1,5 +1,7 @@
-﻿from apps.api.schemas import RunOut, Finding
+﻿import json
+from apps.api.schemas import RunOut, Finding
 from core.scoring.risk import score_bundle
+from core.security.crypto import sha256_of_text
 
 def test_phase3_runout_exposes_score_fields():
 
@@ -28,6 +30,7 @@ def test_phase3_runout_exposes_score_fields():
         invalid_rows=[],
         risk_points=bundle["risk_points"],
         compliance_score=bundle["compliance_score"],
+        findings_hash=sha256_of_text(json.dumps(findings, sort_keys=True)),
     )
 
     assert run.risk_points == bundle["risk_points"]

@@ -34,6 +34,7 @@ class Run(Base):
     mapping_id: Mapped[int] = mapped_column(Integer, ForeignKey("mappings.id"))
     ruleset_version: Mapped[str] = mapped_column(String(64))
     findings_json: Mapped[str] = mapped_column(Text)  # JSON string
+    findings_hash: Mapped[str] = mapped_column(String(64), server_default="")  # SHA256 hex of findings JSON
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 class AuditLog(Base):
