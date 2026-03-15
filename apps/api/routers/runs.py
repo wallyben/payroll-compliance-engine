@@ -58,7 +58,7 @@ def create_run(
         findings_json=json.dumps({
             "score_bundle": bundle,
             "findings": findings,
-        }),
+        }, sort_keys=True),
     )
 
     db.add(run)
@@ -75,6 +75,9 @@ def create_run(
         ruleset_version=settings.ruleset_version,
         risk_score=bundle["compliance_score"],
         findings=findings,
+        severity_summary=severity_summary,
+        exposure_total=bundle.get("exposure_total"),
+        risk_band=bundle.get("risk_band"),
     )
 
     # Return structured response
