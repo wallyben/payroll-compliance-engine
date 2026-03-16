@@ -64,6 +64,14 @@ def get_previous_run(client_id: str) -> Optional[PayrollRun]:
     return max(client_runs, key=lambda r: (r.period_end, r.created_at))
 
 
+def get_client_runs(client_id: str) -> List["PayrollRun"]:
+    """Return all payroll runs for *client_id*, ordered by period_end then created_at."""
+    return sorted(
+        [r for r in _run_store if r.client_id == client_id],
+        key=lambda r: (r.period_end, r.created_at),
+    )
+
+
 def _clear_runs() -> None:
     """Reset the run store — for testing only."""
     _run_store.clear()
