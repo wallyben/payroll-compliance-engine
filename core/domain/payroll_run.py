@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime, timezone
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -19,6 +19,10 @@ class PayrollRun(BaseModel):
     dataset_hash: str
     normalized_rows: List[CanonicalPayrollRow]
     created_at: datetime
+    # Risk enrichment — populated after rules engine execution.
+    # risk_score: raw risk-points total (higher = more risk).
+    risk_score: float = 0.0
+    findings: List[Dict[str, Any]] = []
 
 
 def create_payroll_run(
@@ -27,6 +31,9 @@ def create_payroll_run(
     period_end: date,
     dataset_hash: str,
     normalized_rows: List[CanonicalPayrollRow],
+    *,
+    risk_score: float = 0.0,
+    findings: List[Dict[str, Any]] | None = None,
 ) -> PayrollRun:
     """Create a payroll run linked to a client and store it."""
     run = PayrollRun(
@@ -37,6 +44,8 @@ def create_payroll_run(
         dataset_hash=dataset_hash,
         normalized_rows=normalized_rows,
         created_at=datetime.now(timezone.utc),
+        risk_score=risk_score,
+        findings=findings if findings is not None else [],
     )
     _run_store.append(run)
     return run
